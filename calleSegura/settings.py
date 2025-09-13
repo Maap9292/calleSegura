@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'reportes',
     'rest_framework',
     'ciudadanos',
+    'ubicaciones',
 ]
 
 MIDDLEWARE = [
