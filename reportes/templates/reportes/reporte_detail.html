@@ -1,26 +1,31 @@
 {% extends 'reportes/base.html' %}
+
 {% block content %}
+
 <h2>{{ reporte.titulo_reporte }}</h2>
+
 <p><strong>Descripción:</strong> {{ reporte.descripcion_reporte }}</p>
 <p><strong>Dirección:</strong> {{ reporte.direccion }}</p>
 <p><strong>Ciudad:</strong> {{ reporte.ciudad }}</p>
 <p><strong>Estado:</strong> {{ reporte.estado_reporte }}</p>
+
 {% if reporte.imagen %}
     <img src="{{ reporte.imagen.url }}" alt="Imagen" width="300">
 {% endif %}
 
-{% if user.groups.filter(name='Entidad').exists %}
+{% if es_entidad %}
     <form method="post" action="{% url 'reporte_cambiar_estado' reporte.id %}">
         {% csrf_token %}
         <label for="estado_reporte">Cambiar estado:</label>
         <select name="estado_reporte" id="estado_reporte">
-            <option value="pendiente" {% if reporte.estado_reporte=='pendiente' %}selected{% endif %}>Pendiente</option>
-            <option value="en_progreso" {% if reporte.estado_reporte=='en_progreso' %}selected{% endif %}>En progreso</option>
-            <option value="reparado" {% if reporte.estado_reporte=='reparado' %}selected{% endif %}>Reparado</option>
+            <option value="pendiente" {% if reporte.estado_reporte == 'pendiente' %}selected{% endif %}>Pendiente</option>
+            <option value="en_progreso" {% if reporte.estado_reporte == 'en_progreso' %}selected{% endif %}>En progreso</option>
+            <option value="reparado" {% if reporte.estado_reporte == 'reparado' %}selected{% endif %}>Reparado</option>
+
         </select>
         <button type="submit">Actualizar</button>
     </form>
 {% endif %}
 
-<a href="{% url 'reporte_list' %}">Volver a la lista</a>
 {% endblock %}
+

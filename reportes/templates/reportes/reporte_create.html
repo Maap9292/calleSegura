@@ -1,12 +1,93 @@
 {% extends 'reportes/base.html' %}
 {% block content %}
+<div class="container">
 <h2>Crear nuevo reporte</h2>
 
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    {{ form.as_p }}
+
+    <!-- Campos normales del formulario -->
+    {{ form.titulo_reporte.label_tag }} {{ form.titulo_reporte }}
+    {{ form.descripcion_reporte.label_tag }} {{ form.descripcion_reporte }}
+    {{ form.direccion.label_tag }} {{ form.direccion }}
+    {{ form.ciudad.label_tag }} {{ form.ciudad }}
+    {{ form.imagen.label_tag }} {{ form.imagen }}
+
+    <!-- Campos ocultos manuales para latitud y longitud -->
+    <input type="hidden" name="latitud" id="latitud" value="13.6929">
+    <input type="hidden" name="longitud" id="longitud" value="-89.2182">
+
+    <!-- Contenedor del mapa -->
+    <div id="map"></div>
+
     <button type="submit">Enviar reporte</button>
 </form>
 
-<a href="{% url 'reporte_list' %}">Volver a la lista</a>
+<a class="button" href="{% url 'reporte_list' %}">Volver a la lista</a>
+</div>
+
+<!-- Leaflet CSS y JS -->
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<!-- CSS específico para mapa -->
+<style>
+#map {
+    height: 400px;
+    width: 100%;
+    min-height: 400px;
+    border: 1px solid #ccc;
+    margin-top: 20px;
+    border-radius: 5px;
+}
+</style>
+
+<!-- Script para inicializar mapa y actualizar lat/lng -->
+<script>
+window.addEventListener('load', function() {
+    var initialLat = 13.6929;
+    var initialLng = -89.2182;
+
+    var map = L.map('map').setView([initialLat, initialLng], 13);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    var marker = L.marker([initialLat, initialLng], {draggable: true}).addTo(map);
+
+    // Campos ocultos manuales
+    var latField = document.getElementById('latitud');
+    var lngField = document.getElementById('longitud');
+
+    function actualizarCampos(lat, lng) {
+        latField.value = lat;
+        lngField.value = lng;
+    }
+
+    // Inicializar campos con posición inicial
+    actualizarCampos(initialLat, initialLng);
+
+    // Actualizar campos al mover marcador
+    marker.on('dragend', function() {
+        var pos = marker.getLatLng();
+        actualizarCampos(pos.lat, pos.lng);
+    });
+
+    // Actualizar campos al hacer clic en mapa
+    map.on('click', function(e) {
+        marker.setLatLng(e.latlng);
+        actualizarCampos(e.latlng.lat, e.latlng.lng);
+    });
+
+    // Forzar recalculo de tamaño del mapa
+    setTimeout(function() {
+        map.invalidateSize();
+    }, 200);
+});
+</script>
 {% endblock %}
+
