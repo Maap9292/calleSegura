@@ -7,23 +7,41 @@ from .serializers import ReporteSerializer
 from .permissions import IsEntidad
 
 class ReporteViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet para Reporte:
+    - GET: público
+    - POST: usuarios autenticados (ciudadanos)
+    - PATCH/PUT/DELETE: usuarios con permisos específicos si lo necesitamos
+    """
     queryset = Reporte.objects.all().order_by('-fecha_reporte')
     serializer_class = ReporteSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]  # GET público, POST requiere auth
 
     def perform_create(self, serializer):
-        # asigna automáticamente el usuario autenticado como ciudadano creador
+        # Asignar automáticamente el usuario autenticado como ciudadano creador
         serializer.save(ciudadano=self.request.user)
 
-    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated, IsEntidad])
+    @action(
+        detail=True,
+        methods=['post'],
+        permission_classes=[IsAuthenticated, IsEntidad]  # Solo entidades
+    )
     def cambiar_estado(self, request, pk=None):
         reporte = self.get_object()
         nuevo_estado = request.data.get('estado_reporte')
+
         if nuevo_estado not in dict(Reporte.ESTADOS):
-            return Response({'detail': 'Estado inválido.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {'detail': 'Estado inválido.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Actualiza estado y asigna la entidad responsable
         reporte.estado_reporte = nuevo_estado
         reporte.entidad_responsable = request.user
         reporte.save()
+
         return Response(self.get_serializer(reporte).data)
+
 
 

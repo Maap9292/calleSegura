@@ -22,4 +22,5 @@ urlpatterns = [
     path('api/', include('reportes.urls')), #apuntar a la app reportes
     path('api/', include('ciudadanos.urls')), #apuntar a la app ciudadanos
     path('api/', include('ubicaciones.urls')), #apuntar a la app ubicaciones
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]
