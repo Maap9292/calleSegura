@@ -27,6 +27,8 @@ class Reporte(models.Model):
 
     estado_reporte = models.CharField(max_length=20, choices=ESTADOS, default="pendiente")
 
+    imagen = models.ImageField(upload_to='reportes/', null=True, blank=True)
+
     class Meta:
         permissions = [
             ('can_change_status', 'Can change report status'),

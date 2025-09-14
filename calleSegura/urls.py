@@ -16,6 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -23,4 +25,9 @@ urlpatterns = [
     path('api/', include('ciudadanos.urls')), #apuntar a la app ciudadanos
     path('api/', include('ubicaciones.urls')), #apuntar a la app ubicaciones
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('reportes/', include('reportes.urls_frontend')),
+
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

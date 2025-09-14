@@ -134,4 +134,17 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_REDIRECT_URL = '/api/'  
+# URL a la que se redirige si el usuario no está logueado
+LOGIN_URL = '/reportes/login/'
+
+# URL a la que se redirige después de iniciar sesión
+LOGIN_REDIRECT_URL = '/reportes/'
+
+# URL a la que se redirige al cerrar sesión
+LOGOUT_REDIRECT_URL = '/reportes/'
+ 
+
+import os
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

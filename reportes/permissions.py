@@ -1,9 +1,18 @@
-from rest_framework.permissions import BasePermission
+from rest_framework import permissions
 
-class IsEntidad(BasePermission):
+class EsCiudadano(permissions.BasePermission):
     """
-    Permite la acción solo a usuarios autenticados con role == 'entidad' o staff.
+    Permite solo crear reportes si es Ciudadano.
     """
     def has_permission(self, request, view):
-        user = request.user
-        return bool(user and user.is_authenticated and (getattr(user, 'role', '') == 'entidad' or user.is_staff))
+        return request.user.is_authenticated and not request.user.groups.filter(name="Entidad").exists()
+
+
+class EsEntidad(permissions.BasePermission):
+    """
+    Permite solo editar el estado si es Entidad.
+    """
+    def has_permission(self, request, view):
+        return request.user.is_authenticated and request.user.groups.filter(name="Entidad").exists()
+
+

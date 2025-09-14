@@ -1,0 +1,41 @@
+{% extends 'reportes/base.html' %}
+
+{% block content %}
+<h2>Reportes</h2>
+
+{% if es_entidad %}
+    <p>Como entidad puedes cambiar el estado de los reportes.</p>
+{% else %}
+    <a href="{% url 'reporte_create' %}">Crear nuevo reporte</a>
+{% endif %}
+
+<ul>
+    {% for reporte in reportes %}
+    <li>
+        <strong>{{ reporte.titulo_reporte }}</strong> -
+        Estado: {{ reporte.estado_reporte }}<br>
+        Ciudad: {{ reporte.ciudad }}<br>
+        Dirección: {{ reporte.direccion }}<br>
+        {% if reporte.ciudadano_info %}
+            Ciudadano: {{ reporte.ciudadano_info.username }}
+        {% endif %}
+        {% if es_entidad %}
+            <!-- Formulario para cambiar estado -->
+            <form method="post" action="{% url 'reporte_cambiar_estado' reporte.id %}">
+                {% csrf_token %}
+                <select name="estado_reporte">
+                    {% for key, value in reporte.ESTADOS %}
+                        <option value="{{ key }}" {% if key == reporte.estado_reporte %}selected{% endif %}>
+                            {{ value }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Cambiar estado</button>
+            </form>
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>
+
+{% endblock content %}
+

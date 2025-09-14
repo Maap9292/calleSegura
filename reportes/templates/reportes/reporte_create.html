@@ -1,0 +1,12 @@
+{% extends 'reportes/base.html' %}
+{% block content %}
+<h2>Crear nuevo reporte</h2>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Enviar reporte</button>
+</form>
+
+<a href="{% url 'reporte_list' %}">Volver a la lista</a>
+{% endblock %}
